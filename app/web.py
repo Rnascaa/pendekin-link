@@ -1,9 +1,14 @@
 """Blueprint halaman web dan redirect."""
-from flask import Blueprint, abort, redirect
+from flask import Blueprint, abort, redirect, render_template
 
 from . import services
 
 bp = Blueprint("web", __name__)
+
+
+@bp.get("/")
+def index():
+    return render_template("index.html")
 
 
 @bp.get("/<code>")
