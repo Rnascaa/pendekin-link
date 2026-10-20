@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pendekin — pemendek link</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<main>
+  <h1>Pendekin</h1>
+  <p class="lead">Tempel link panjang, dapatkan link pendek yang siap dibagikan.</p>
+
+  <form id="form">
+    <label>Link panjang
+      <input id="url" type="text" inputmode="url" placeholder="https://contoh.com/artikel/yang/sangat/panjang" required>
+    </label>
+    <label>Alias (opsional)
+      <div class="alias"><span id="host"></span><input id="alias" type="text" placeholder="promo-lebaran" maxlength="32"></div>
+    </label>
+    <button class="primary" id="go" type="submit">Pendekkan link</button>
+  </form>
+
+  <p id="msg" role="status"></p>
+  <div id="result">
+    <a id="out" href="#" target="_blank" rel="noopener"></a>
+    <button class="ghost" id="copy" type="button">Salin</button>
+  </div>
+
+  <h2>Link terbaru</h2>
+  <ul id="list"></ul>
+</main>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
