@@ -1,4 +1,7 @@
 """Blueprint halaman web dan redirect."""
+docs/readme
+from flask import Blueprint, abort, redirect, render_template
+=======
 feat/web-ui
 from flask import Blueprint, abort, redirect, render_template
 from flask import Blueprint, abort, redirect
