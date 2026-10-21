@@ -17,8 +17,8 @@ def create_app(config_object=Config) -> Flask:
     def not_found(_e):
         return "Link tidak ditemukan.", 404
 
+    return app
     feat/web-ui
     return app
-=======
     return app
     main

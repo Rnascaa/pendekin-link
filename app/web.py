@@ -14,6 +14,7 @@ feat/web-ui
 def index():
     return render_template("index.html")
 
+
 main
 @bp.get("/<code>")
 def follow(code):
