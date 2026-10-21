@@ -1,4 +1,6 @@
-# Pendekin
+# Pendekin-link
+
+Project is still under development
 
 Pemendek link sederhana berbasis **Flask + SQLite**. Tempel link panjang, dapatkan link pendek, dengan alias kustom opsional, penghitung klik, dan daftar link terbaru.
 
