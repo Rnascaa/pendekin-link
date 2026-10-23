@@ -1,7 +1,5 @@
 # Pendekin-link
 
-Project is still under development
-
 Pemendek link sederhana berbasis **Flask + SQLite**. Tempel link panjang, dapatkan link pendek, dengan alias kustom opsional, penghitung klik, dan daftar link terbaru.
 
 ## Fitur
@@ -16,7 +14,7 @@ Pemendek link sederhana berbasis **Flask + SQLite**. Tempel link panjang, dapatk
 ## Struktur proyek
 
 ```
-pendekin/
+pendekin-link/
 ├── app/
 │   ├── __init__.py        # create_app (app factory)
 │   ├── config.py          # konfigurasi
@@ -42,6 +40,8 @@ pendekin/
 ## Menjalankan
 
 ```bash
+git clone https://github.com/Rnascaa/pendekin-link.git
+cd pendekin-link
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
