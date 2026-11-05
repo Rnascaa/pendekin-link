@@ -58,6 +58,7 @@ Buka http://127.0.0.1:5000
 | `HOST`        | `127.0.0.1`  | Alamat bind server            |
 | `PORT`        | `5000`       | Port server                   |
 | `FLASK_DEBUG` | `0`          | Set `1` untuk mode debug      |
+| `TRUST_PROXY` | `0`          | Set `1` jika di balik reverse proxy, agar `short_url` memakai `https://` |
 
 ## API
 
@@ -92,4 +93,24 @@ pip install gunicorn
 gunicorn "run:app"
 ```
 
-> Catatan: API ini belum memiliki autentikasi, sehingga siapa pun yang bisa mengakses server dapat membuat dan menghapus link. Tambahkan autentikasi sebelum dipublikasikan ke internet.
+### PythonAnywhere
+
+Di tab **Consoles**, buka Bash console lalu jalankan:
+
+```bash
+git clone https://github.com/Rnascaa/pendekin-link.git
+cd pendekin-link
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+Lalu di tab **Web**:
+
+1. **Add a new web app** → **Manual configuration** → pilih versi Python 3.10 atau lebih baru.
+2. Isi **Virtualenv** dengan `/home/USERNAME/pendekin-link/.venv`.
+3. Buka **WSGI configuration file**, ganti seluruh isinya dengan `deploy/pythonanywhere_wsgi.py`, dan ganti `USERNAME`.
+4. Aktifkan **Force HTTPS**, lalu klik **Reload**.
+
+Aplikasi tersedia di `https://USERNAME.pythonanywhere.com`. Database SQLite tersimpan di `links.db` pada folder proyek dan tidak hilang saat aplikasi di-reload.
+
+> Catatan: API ini tidak memiliki autentikasi, sehingga siapa pun yang bisa mengakses server dapat membuat, melihat, dan menghapus link.

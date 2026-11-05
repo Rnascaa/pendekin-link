@@ -9,6 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Config:
     DB_PATH = os.environ.get("DB_PATH", str(BASE_DIR / "links.db"))
+    TRUST_PROXY = os.environ.get("TRUST_PROXY") == "1"
 
     # Pembuatan kode pendek
     ALPHABET = string.ascii_letters + string.digits
