@@ -23,3 +23,11 @@ def is_valid_url(url: str) -> bool:
         and bool(parsed.hostname)
         and len(url) <= current_app.config["MAX_URL_LENGTH"]
     )
+
+
+def is_valid_alias(alias: str) -> bool:
+    return bool(current_app.config["ALIAS_RE"].match(alias))
+
+
+def is_reserved(alias: str) -> bool:
+    return alias.lower() in current_app.config["RESERVED"]
