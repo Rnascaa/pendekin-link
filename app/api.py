@@ -10,11 +10,23 @@ bp = Blueprint("api", __name__, url_prefix="/api")
 def shorten():
     data = request.get_json(silent=True) or {}
     url = validators.normalize_url(data.get("url") or "")
+    alias = (data.get("alias") or "").strip()
 
     if not validators.is_valid_url(url):
         return jsonify(error="URL tidak valid. Gunakan alamat http:// atau https://."), 400
 
-    row = services.create_link(url)
+    if alias:
+        if not validators.is_valid_alias(alias):
+            return jsonify(error="Alias harus 3–20 karakter: huruf, angka, - atau _."), 400
+        if validators.is_reserved(alias):
+            return jsonify(error="Alias itu dicadangkan. Pilih alias lain."), 400
+        if services.get_link(alias):
+            return jsonify(error="Alias sudah dipakai. Pilih alias lain."), 409
+
+    try:
+        row = services.create_link(url, alias or None)
+    except services.AliasTaken:
+        return jsonify(error="Alias sudah dipakai. Pilih alias lain."), 409
     return jsonify(services.link_to_dict(row)), 201
 
 

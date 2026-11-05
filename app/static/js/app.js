@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+$("host").textContent = location.host + "/";
 
 function setMsg(text, isErr) {
   $("msg").textContent = text;
@@ -78,7 +79,7 @@ $("form").addEventListener("submit", async (e) => {
     const res = await fetch("/api/shorten", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: $("url").value }),
+      body: JSON.stringify({ url: $("url").value, alias: $("alias").value }),
     });
     const data = await res.json();
     if (!res.ok) return setMsg(data.error || "Terjadi kesalahan.", true);
@@ -87,6 +88,7 @@ $("form").addEventListener("submit", async (e) => {
     $("result").classList.add("show");
     $("copy").onclick = () => copyText(data.short_url, $("copy"));
     $("url").value = "";
+    $("alias").value = "";
     loadList();
   } catch {
     setMsg("Tidak bisa terhubung ke server.", true);
