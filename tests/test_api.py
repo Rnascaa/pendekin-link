@@ -1,8 +1,33 @@
+from app import create_app
+from app.config import TestConfig
+
+
 def shorten(client, url, alias=None):
     payload = {"url": url}
     if alias is not None:
         payload["alias"] = alias
     return client.post("/api/shorten", json=payload)
+
+
+def proxied_short_url(tmp_path, trust_proxy):
+    class Cfg(TestConfig):
+        DB_PATH = str(tmp_path / "proxy.db")
+        TRUST_PROXY = trust_proxy
+
+    res = create_app(Cfg).test_client().post(
+        "/api/shorten",
+        json={"url": "https://contoh.com", "alias": "proxy"},
+        headers={"Host": "pendekin.example", "X-Forwarded-Proto": "https"},
+    )
+    return res.get_json()["short_url"]
+
+
+def test_short_url_uses_https_behind_trusted_proxy(tmp_path):
+    assert proxied_short_url(tmp_path, True) == "https://pendekin.example/proxy"
+
+
+def test_forwarded_proto_ignored_without_trust_proxy(tmp_path):
+    assert proxied_short_url(tmp_path, False) == "http://pendekin.example/proxy"
 
 
 def test_index_page(client):
