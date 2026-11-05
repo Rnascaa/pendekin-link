@@ -2,11 +2,8 @@ from app import create_app
 from app.config import TestConfig
 
 
-def shorten(client, url, alias=None):
-    payload = {"url": url}
-    if alias is not None:
-        payload["alias"] = alias
-    return client.post("/api/shorten", json=payload)
+def shorten(client, url):
+    return client.post("/api/shorten", json={"url": url})
 
 
 def proxied_short_url(tmp_path, trust_proxy):
@@ -16,18 +13,18 @@ def proxied_short_url(tmp_path, trust_proxy):
 
     res = create_app(Cfg).test_client().post(
         "/api/shorten",
-        json={"url": "https://contoh.com", "alias": "proxy"},
+        json={"url": "https://contoh.com"},
         headers={"Host": "pendekin.example", "X-Forwarded-Proto": "https"},
     )
     return res.get_json()["short_url"]
 
 
 def test_short_url_uses_https_behind_trusted_proxy(tmp_path):
-    assert proxied_short_url(tmp_path, True) == "https://pendekin.example/proxy"
+    assert proxied_short_url(tmp_path, True).startswith("https://pendekin.example/")
 
 
 def test_forwarded_proto_ignored_without_trust_proxy(tmp_path):
-    assert proxied_short_url(tmp_path, False) == "http://pendekin.example/proxy"
+    assert proxied_short_url(tmp_path, False).startswith("http://pendekin.example/")
 
 
 def test_index_page(client):
@@ -56,26 +53,17 @@ def test_shorten_adds_https_scheme(client):
     assert res.get_json()["url"] == "https://contoh.com"
 
 
-def test_shorten_custom_alias(client):
-    res = shorten(client, "https://contoh.com", "promo-1")
+def test_alias_is_ignored(client):
+    res = client.post("/api/shorten", json={"url": "https://contoh.com", "alias": "promo-1"})
     assert res.status_code == 201
-    assert res.get_json()["code"] == "promo-1"
+    code = res.get_json()["code"]
+    assert code != "promo-1"
+    assert len(code) == 6
+    assert client.get("/promo-1").status_code == 404
 
 
-def test_duplicate_alias(client):
-    shorten(client, "https://a.com", "sama")
-    res = shorten(client, "https://b.com", "sama")
-    assert res.status_code == 409
-
-
-def test_reserved_alias(client):
-    assert shorten(client, "https://a.com", "admin").status_code == 400
-    assert shorten(client, "https://a.com", "API").status_code == 400
-
-
-def test_invalid_alias(client):
-    assert shorten(client, "https://a.com", "a b").status_code == 400
-    assert shorten(client, "https://a.com", "ab").status_code == 400
+def test_index_has_no_alias_field(client):
+    assert 'id="alias"' not in client.get("/").get_data(as_text=True)
 
 
 def test_invalid_urls(client):
@@ -86,7 +74,7 @@ def test_invalid_urls(client):
 
 
 def test_redirect_counts_clicks(client):
-    code = shorten(client, "https://contoh.com", "tujuan").get_json()["code"]
+    code = shorten(client, "https://contoh.com").get_json()["code"]
     res = client.get(f"/{code}")
     assert res.status_code == 302
     assert res.headers["Location"] == "https://contoh.com"
