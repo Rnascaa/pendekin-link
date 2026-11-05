@@ -1,10 +1,10 @@
 # Pendekin-link
 
-Pemendek link sederhana berbasis **Flask + SQLite**. Tempel link panjang, dapatkan link pendek, dengan alias kustom opsional, penghitung klik, dan daftar link terbaru.
+Pemendek link sederhana berbasis **Flask + SQLite**. Tempel link panjang, dapatkan link pendek, dengan penghitung klik dan daftar link terbaru.
 
 ## Fitur
 
-- Link pendek acak (6 karakter) atau alias kustom
+- Link pendek acak (6 karakter)
 - Penghitung klik per link
 - Hapus link
 - Antarmuka web responsif (mendukung mode gelap)
@@ -19,7 +19,7 @@ pendekin-link/
 │   ├── __init__.py        # create_app (app factory)
 │   ├── config.py          # konfigurasi
 │   ├── db.py              # koneksi & skema SQLite
-│   ├── validators.py      # validasi URL & alias
+│   ├── validators.py      # validasi URL
 │   ├── services.py        # logika akses data
 │   ├── api.py             # blueprint REST API (/api)
 │   ├── web.py             # halaman utama & redirect
@@ -64,7 +64,7 @@ Buka http://127.0.0.1:5000
 
 | Method   | Endpoint            | Keterangan                          |
 |----------|---------------------|-------------------------------------|
-| `POST`   | `/api/shorten`      | Buat link. Body: `{"url", "alias"?}` |
+| `POST`   | `/api/shorten`      | Buat link. Body: `{"url"}`          |
 | `GET`    | `/api/links`        | 20 link terbaru                     |
 | `DELETE` | `/api/links/<code>` | Hapus link                          |
 | `GET`    | `/<code>`           | Redirect ke URL asli (302)          |
@@ -74,7 +74,7 @@ Contoh:
 ```bash
 curl -X POST http://127.0.0.1:5000/api/shorten \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://contoh.com/artikel/panjang", "alias": "promo"}'
+  -d '{"url": "https://contoh.com/artikel/panjang"}'
 ```
 
 ## Tes

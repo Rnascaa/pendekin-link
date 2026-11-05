@@ -7,10 +7,6 @@ from flask import current_app, request
 from .db import get_db
 
 
-class AliasTaken(Exception):
-    """Kode/alias sudah dipakai link lain."""
-
-
 def generate_code() -> str:
     cfg = current_app.config
     while True:
@@ -23,16 +19,17 @@ def get_link(code: str):
     return get_db().execute("SELECT * FROM links WHERE code = ?", (code,)).fetchone()
 
 
-def create_link(url: str, alias: str | None = None):
-    """Simpan link baru. Melempar AliasTaken jika kode sudah ada."""
+def create_link(url: str):
+    """Simpan link baru dengan kode acak."""
     db = get_db()
-    code = alias or generate_code()
-    try:
-        db.execute("INSERT INTO links (code, url) VALUES (?, ?)", (code, url))
-        db.commit()
-    except sqlite3.IntegrityError as exc:  # balapan antar request
-        raise AliasTaken(code) from exc
-    return get_link(code)
+    while True:
+        code = generate_code()
+        try:
+            db.execute("INSERT INTO links (code, url) VALUES (?, ?)", (code, url))
+            db.commit()
+        except sqlite3.IntegrityError:  # balapan antar request, coba kode lain
+            continue
+        return get_link(code)
 
 
 def list_links():
